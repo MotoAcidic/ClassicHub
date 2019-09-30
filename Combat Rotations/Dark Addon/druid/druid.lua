@@ -29,8 +29,8 @@
 --To do
     --Healing Spells
     ----------------
-    --Rejuvenation
-    --Regrowth
+    --Rejuvenation    TFinch finished
+    --Regrowth        TFinch finished
     --Cure Poison
     --Rebirth
     --Tranquility
