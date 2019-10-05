@@ -1,5 +1,5 @@
 -------------------------------------
--- Druid Levelling Rotation by Rex --
+-- Druid Levelling Rotation by Rex / TFinch --
 -------------------------------------
 
 --Notes
@@ -63,6 +63,7 @@
 
 
 local addon, dark_addon = ...
+local addon, dark_addon_potions = ...
 
 local SelfHealCastTime = 0
 local function selfheal(incombat)
@@ -73,38 +74,45 @@ local function selfheal(incombat)
   local ichealingtouchpercent
   local icregrowthpercent
   local icrejuvenationpercent
+  local ichealthpotionpercent
 
 
   if incombat then
 
+-- Regrowth Spell
   if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
     icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
   else
-
-  if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
+    if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
     icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
-  end
+	end
 
-  if incombat then
-
-  if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
-    icrrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-  else
-
+   if incombat then
+      -- Rejuvenation Spell
   if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
     icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-  end
+  else
+    if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
+    icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
+	end
 
-  if incombat then
-
+   if incombat then
+  -- Healingtouch spell
   if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
     ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25)
   else
-
-  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
+    if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
     ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25)
-  end
-  --print('healingwavepercent ', healingwavepercent, ' player %', player.health.percent, ' player.actual ',player.health.actual)
+	end
+
+   if incombat then
+    -- Health Potions
+  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
+    ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
+  else  
+  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
+    ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
+	end
 
   -- to save mana, use the lowest rank spell the will fully heal
   if player.health.percent <= ichealingtouchpercent and not player.moving then
@@ -138,11 +146,53 @@ local function selfheal(incombat)
   end
 
   if player.removable('poison') and castable('Cure Poison') and -spell('Cure Poison') == 0 then
+	macro("/cancelform")
     cast('Cure Poison', 'player')
     return true
   end
+
+    -- HEALING POTIONS CODE -- By Andoido
+  -- Major Healing Potions --
+  if player.health.percent <= ichealthpotionpercent and GetItemCount(13446) > 1 and GetItemCooldown(13446) == 0 then
+  macro("/cancelform")
+  RunMacroText('Major Healing Potion')
+  return true
+  end
+
+  -- Superior Healing Potions --
+  if player.health.percent <= ichealthpotionpercent and GetItemCount(3928) > 1 and GetItemCooldown(3928) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Superior Healing Potion')
+  end
+
+  -- Greater Healing Potions --
+  if player.health.percent <= ichealthpotionpercent and GetItemCount(1710) > 1 and GetItemCooldown(1710) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Greater Healing Potion')
+  end
+
+  -- Healing Potions --
+  if player.health.percent <= ichealthpotionpercent and GetItemCount(929) > 1 and GetItemCooldown(929) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Healing Potion')
+  end
+
+  -- Lesser Healing Potions --
+  if player.health.percent <= ichealthpotionpercent and GetItemCount(858) > 1 and GetItemCooldown(858) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Lesser Healing Potion')
+  end
+
+  -- Minor Healing Potions --
+  if player.health.percent <= ichealthpotionpercent and GetItemCount(118) > 1 and GetItemCooldown(118) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Minor Healing Potion')
+  end
+  ------------ END OF HEALING POTIONS CHECK ------------
 end
 setfenv(selfheal, dark_addon.environment.env)
+
+
 
 local function interrupt()
   if not toggle('interrupts', false) then return end
@@ -174,6 +224,9 @@ local function combat()
 
   local useicrejuvenation = dark_addon.settings.fetch('dr_druid_icrejuvenation.check', true)
   local icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
+
+  local useichealthpotion = dark_addon.settings.fetch('dr_druid_ichealthpotion.check', true)
+  local ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_icrhealthpotion.spin', 25)
 
 
 
@@ -610,6 +663,7 @@ local function interface()
   { key = 'ichealingtouch', type = 'checkspin', text = 'Healing Touch', desc = 'Healing Touch at player health %', min = 1, max = 100, step = 5},
   { key = 'icregrowth', type = 'checkspin', text = 'Regrowth', desc = 'Regrowth at player health %', min = 1, max = 100, step = 5},
   { key = 'icrejuvenation', type = 'checkspin', text = 'Rejuvenation', desc = 'Rejuvenation at player health %', min = 1, max = 100, step = 5},
+  { key = 'ichealthpotion', type = 'checkspin', text = 'Health Potion', desc = 'Health Potion used at player health %', min = 1, max = 100, step = 5},
   { key = 'curepoisonooc', type = 'checkbox', text = 'Cure Poison', desc = 'Use out of combat' },
   
   { type = 'rule' },
