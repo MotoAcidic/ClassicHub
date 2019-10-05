@@ -75,6 +75,7 @@ local function selfheal(incombat)
   local icregrowthpercent
   local icrejuvenationpercent
   local ichealthpotionpercent
+  local icmanapotionpercent
 
 
   if incombat then
@@ -107,11 +108,20 @@ local function selfheal(incombat)
 
    if incombat then
     -- Health Potions
-  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
+  if not dark_addon.settings.fetch('dr_druid_ichealthpotion.check', false) then return false end
     ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
   else  
-  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
+  if not dark_addon.settings.fetch('dr_druid_ichealthpotion.check', false) then return false end
     ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
+	end
+
+     if incombat then
+    -- Mana Potions
+  if not dark_addon.settings.fetch('dr_druid_icmanapotion.check', false) then return false end
+    icmanapotionpercent = dark_addon.settings.fetch('dr_druid_icmanapotion.spin', 25)
+  else  
+  if not dark_addon.settings.fetch('dr_druid_icmanapotion.check', false) then return false end
+    icmanapotionpercent = dark_addon.settings.fetch('dr_druid_icmanapotion.spin', 25)
 	end
 
   -- to save mana, use the lowest rank spell the will fully heal
@@ -151,42 +161,66 @@ local function selfheal(incombat)
     return true
   end
 
-    -- HEALING POTIONS CODE -- By Andoido
-  -- Major Healing Potions --
+    -- Major Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(13446) > 1 and GetItemCooldown(13446) == 0 then
   macro("/cancelform")
   RunMacroText('Major Healing Potion')
   return true
   end
+  if player.health.percent <= icmanapotionpercent and GetItemCount(13444) > 1 and GetItemCooldown(13444) == 0 then
+  macro("/cancelform")
+  RunMacroText('Major Mana Potion')
+  return true
+  end
 
-  -- Superior Healing Potions --
+  -- Superior Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(3928) > 1 and GetItemCooldown(3928) == 0 then
   macro("/cancelform")
   RunMacroText('/use Superior Healing Potion')
   end
+  if player.health.percent <= icmanapotionpercent and GetItemCount(13443) > 1 and GetItemCooldown(13443) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Superior Mana Potion')
+  end
 
-  -- Greater Healing Potions --
+  -- Greater Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(1710) > 1 and GetItemCooldown(1710) == 0 then
   macro("/cancelform")
   RunMacroText('/use Greater Healing Potion')
   end
+    if player.health.percent <= icmanapotionpercent and GetItemCount(6149) > 1 and GetItemCooldown(6149) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Greater Mana Potion')
+  end
 
-  -- Healing Potions --
+  -- Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(929) > 1 and GetItemCooldown(929) == 0 then
   macro("/cancelform")
   RunMacroText('/use Healing Potion')
   end
+  if player.health.percent <= icmanapotionpercent and GetItemCount(3827) > 1 and GetItemCooldown(3827) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Mana Potion')
+  end
 
-  -- Lesser Healing Potions --
+  -- Lesser Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(858) > 1 and GetItemCooldown(858) == 0 then
   macro("/cancelform")
   RunMacroText('/use Lesser Healing Potion')
   end
+  if player.health.percent <= icmanapotionpercent and GetItemCount(3385) > 1 and GetItemCooldown(3385) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Lesser Mana Potion')
+  end
 
-  -- Minor Healing Potions --
+  -- Minor Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(118) > 1 and GetItemCooldown(118) == 0 then
   macro("/cancelform")
   RunMacroText('/use Minor Healing Potion')
+  end
+  if player.health.percent <= icmanapotionpercent and GetItemCount(2455) > 1 and GetItemCooldown(2455) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Minor Mana Potion')
   end
   ------------ END OF HEALING POTIONS CHECK ------------
 end
@@ -228,7 +262,8 @@ local function combat()
   local useichealthpotion = dark_addon.settings.fetch('dr_druid_ichealthpotion.check', true)
   local ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_icrhealthpotion.spin', 25)
 
-
+  local useicmanapotion = dark_addon.settings.fetch('dr_druid_icmanapotion.check', true)
+  local icmanapotionpercent = dark_addon.settings.fetch('dr_druid_icrmanapotion.spin', 25)
 
   local usedemoroar = dark_addon.settings.fetch('dr_druid_usedemoroar', false)
   local usegrowl = dark_addon.settings.fetch('dr_druid_usegrowl', false)
@@ -555,6 +590,33 @@ if not player.alive or player.buff('Drink').up or player.buff('Food').up then re
       end            
     end
 
+        --Form management with Insect Swarm opener
+    if dark_addon.settings.fetch('dr_druid_opener') == 'Insect Swarm' then
+      if animalform == true and target.exists and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 then
+        macro("/cancelform")        
+        return cast('Insect Swarm', 'target')
+      end
+      if target.exists and castable('Insect Swarm') and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 then
+        return cast('Insect Swarm', 'target')
+      end
+      if not toggle('override_form', false) and dark_addon.settings.fetch('dr_druid_form') == 'Bear' then      
+        --Dire Bear Form
+        if IsSpellKnown(9634) and castable('Dire Bear Form') and player.buff('Dire Bear Form').down then
+          return cast('Dire Bear Form', player)
+        end
+        --Bear Form
+        if not IsSpellKnown(9634) and castable('Bear Form') and player.buff('Bear Form').down then
+          return cast('Bear Form', player)
+        end
+      end
+      if not toggle('override_form', false) and dark_addon.settings.fetch('dr_druid_form') == 'Cat' then
+        --Cat Form
+        if castable('Cat Form') and player.buff('Cat Form').down then
+          return cast('Cat Form', player)
+        end
+      end            
+    end
+
     --Form management with Faerie Fire opener
     if dark_addon.settings.fetch('dr_druid_opener') == 'Faerie Fire' then
       if animalform == true and target.exists and -spell('Faerie Fire') == 0 and target.debuff('Faerie Fire').down and IsSpellInRange('Faerie Fire', 'target') == 1 then
@@ -641,6 +703,7 @@ local function interface()
     { key = 'Moonfire', text = 'Moonfire' },
     { key = 'Faerie Fire', text = 'Faerie Fire' },
     { key = 'Feral Faerie Fire', text = 'Feral Faerie Fire' },
+    { key = 'Insect Swarm', text = 'Insect Swarm' },
   }
   },
 
@@ -664,6 +727,7 @@ local function interface()
   { key = 'icregrowth', type = 'checkspin', text = 'Regrowth', desc = 'Regrowth at player health %', min = 1, max = 100, step = 5},
   { key = 'icrejuvenation', type = 'checkspin', text = 'Rejuvenation', desc = 'Rejuvenation at player health %', min = 1, max = 100, step = 5},
   { key = 'ichealthpotion', type = 'checkspin', text = 'Health Potion', desc = 'Health Potion used at player health %', min = 1, max = 100, step = 5},
+  { key = 'icmanapotion', type = 'checkspin', text = 'Mana Potion', desc = 'Mana Potion used at player health %', min = 1, max = 100, step = 5},
   { key = 'curepoisonooc', type = 'checkbox', text = 'Cure Poison', desc = 'Use out of combat' },
   
   { type = 'rule' },

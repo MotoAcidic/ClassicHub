@@ -1,0 +1,3 @@
+local addon, dark_addon = ...
+
+dark_addon.data = { }
