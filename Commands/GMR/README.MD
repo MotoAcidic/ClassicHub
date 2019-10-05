@@ -1,0 +1,6 @@
+```
+/run HEALTH_PERCENTAGE_EAT = 100
+/run HEALTH_PERCENTAGE_EAT = 90
+/run MANA_PERCENTAGE_DRINK = 50
+/run GrindEverything(true)
+```

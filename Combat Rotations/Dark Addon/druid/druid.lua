@@ -77,42 +77,34 @@ local function selfheal(incombat)
   local ichealthpotionpercent
 
 
-  if incombat then
+ 
 
 -- Regrowth Spell
+  if incombat then
   if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
     icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
-  else
-    if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
-    icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
-	end
+  end
 
-   if incombat then
-      -- Rejuvenation Spell
+  
+  -- Rejuvenation Spell
+  if incombat then
   if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
     icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-  else
-    if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
-    icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-	end
+  end
 
-   if incombat then
+   
   -- Healingtouch spell
+  if incombat then
   if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
-    ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25)
-  else
-    if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
-    ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25)
-	end
+    ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25))
+  end
 
-   if incombat then
-    -- Health Potions
+   
+  -- Health Potions
+  if incombat then
   if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
     ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
-  else  
-  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
-    ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
-	end
+  end
 
   -- to save mana, use the lowest rank spell the will fully heal
   if player.health.percent <= ichealingtouchpercent and not player.moving then
@@ -583,6 +575,65 @@ if not player.alive or player.buff('Drink').up or player.buff('Food').up then re
       end            
     end
 
+	    --Form management with Insect Swarm & Moonfire opener
+      if dark_addon.settings.fetch('dr_druid_opener') == 'Insect Swarm & Moonfire'then
+      --if dark_addon.settings.fetch('dr_druid_opener') == 'Insect Swarm' then
+	  --if animalform == true and target.exists and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 then
+       if animalform == true and target.exists and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 and target.exists and -spell('Moonfire') == 0 and target.debuff('Moonfire').down and IsSpellInRange('Moonfire', 'target') == 1 then
+	   macro("/cancelform")        
+        return cast('Insect Swarm', 'target')
+		return cast('Moonfire', 'target')
+      end
+      --if target.exists and castable('Insect Swarm') and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 then
+        if target.exists and castable('Insect Swarm') and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 and castable('Moonfire') and -spell('Moonfire') == 0 and target.debuff('Moonfire').down and IsSpellInRange('Moonfire', 'target') == 1 then
+		return cast('Insect Swarm', 'target')
+		return cast('Moonfire', 'target')
+      end
+      if not toggle('override_form', false) and dark_addon.settings.fetch('dr_druid_form') == 'Bear' then      
+        --Dire Bear Form
+        if IsSpellKnown(9634) and castable('Dire Bear Form') and player.buff('Dire Bear Form').down then
+          return cast('Dire Bear Form', player)
+        end
+        --Bear Form
+        if not IsSpellKnown(9634) and castable('Bear Form') and player.buff('Bear Form').down then
+          return cast('Bear Form', player)
+        end
+      end
+      if not toggle('override_form', false) and dark_addon.settings.fetch('dr_druid_form') == 'Cat' then
+        --Cat Form
+        if castable('Cat Form') and player.buff('Cat Form').down then
+          return cast('Cat Form', player)
+        end
+      end            
+    end
+
+		    --Form management with Insect Swarm opener
+	  if dark_addon.settings.fetch('dr_druid_opener') == 'Insect Swarm' then
+	  if animalform == true and target.exists and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 then
+		macro("/cancelform")        
+        return cast('Insect Swarm', 'target')
+      end
+		if target.exists and castable('Insect Swarm') and -spell('Insect Swarm') == 0 and target.debuff('Insect Swarm').down and IsSpellInRange('Insect Swarm', 'target') == 1 and castable('Moonfire') and -spell('Moonfire') == 0 and target.debuff('Moonfire').down and IsSpellInRange('Moonfire', 'target') == 1 then
+		return cast('Insect Swarm', 'target')
+      end
+      if not toggle('override_form', false) and dark_addon.settings.fetch('dr_druid_form') == 'Bear' then      
+        --Dire Bear Form
+        if IsSpellKnown(9634) and castable('Dire Bear Form') and player.buff('Dire Bear Form').down then
+          return cast('Dire Bear Form', player)
+        end
+        --Bear Form
+        if not IsSpellKnown(9634) and castable('Bear Form') and player.buff('Bear Form').down then
+          return cast('Bear Form', player)
+        end
+      end
+      if not toggle('override_form', false) and dark_addon.settings.fetch('dr_druid_form') == 'Cat' then
+        --Cat Form
+        if castable('Cat Form') and player.buff('Cat Form').down then
+          return cast('Cat Form', player)
+        end
+      end            
+    end
+
     --Form management with Faerie Fire opener
     if dark_addon.settings.fetch('dr_druid_opener') == 'Faerie Fire' then
       if animalform == true and target.exists and -spell('Faerie Fire') == 0 and target.debuff('Faerie Fire').down and IsSpellInRange('Faerie Fire', 'target') == 1 then
@@ -669,6 +720,8 @@ local function interface()
     { key = 'Moonfire', text = 'Moonfire' },
     { key = 'Faerie Fire', text = 'Faerie Fire' },
     { key = 'Feral Faerie Fire', text = 'Feral Faerie Fire' },
+	{ key = 'Insect Swarm', text = 'Insect Swarm' },
+	{ key = 'Insect Swarm & Moonfire', text = 'Insect Swarm & Moonfire' },
   }
   },
 
