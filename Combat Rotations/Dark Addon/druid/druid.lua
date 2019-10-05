@@ -151,42 +151,67 @@ local function selfheal(incombat)
     return true
   end
 
-    -- HEALING POTIONS CODE -- By Andoido
-  -- Major Healing Potions --
+    -- HEALING POTIONS / Mana Potion CODE -- By TFinch
+  -- Major Healing / mana Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(13446) > 1 and GetItemCooldown(13446) == 0 then
   macro("/cancelform")
   RunMacroText('Major Healing Potion')
   return true
   end
+  if player.mana.percent <= icmanapotionpercent and GetItemCount(13444) > 1 and GetItemCooldown(13446) == 0 then
+  macro("/cancelform")
+  RunMacroText('Major Mana Potion')
+  return true
+  end
 
-  -- Superior Healing Potions --
+  -- Superior Healing / Mana Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(3928) > 1 and GetItemCooldown(3928) == 0 then
   macro("/cancelform")
   RunMacroText('/use Superior Healing Potion')
   end
+  if player.mana.percent <= icmanapotionpercent and GetItemCount(13443) > 1 and GetItemCooldown(3928) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Superior Mana Potion')
+  end
 
-  -- Greater Healing Potions --
+  -- Greater Healing / Mana Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(1710) > 1 and GetItemCooldown(1710) == 0 then
   macro("/cancelform")
   RunMacroText('/use Greater Healing Potion')
   end
+  if player.mana.percent <= ichealthpotionpercent and GetItemCount(6149) > 1 and GetItemCooldown(1710) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Greater Mana Potion')
+  end
 
-  -- Healing Potions --
+  -- Healing / Mana Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(929) > 1 and GetItemCooldown(929) == 0 then
   macro("/cancelform")
   RunMacroText('/use Healing Potion')
   end
+  if player.mana.percent <= icmanapotionpercent and GetItemCount(3827) > 1 and GetItemCooldown(929) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Mana Potion')
+  end
 
-  -- Lesser Healing Potions --
+  -- Lesser Healing / Mana Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(858) > 1 and GetItemCooldown(858) == 0 then
   macro("/cancelform")
   RunMacroText('/use Lesser Healing Potion')
   end
+  if player.mana.percent <= icmanapotionpercent and GetItemCount(3385) > 1 and GetItemCooldown(858) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Lesser Mana Potion')
+  end
 
-  -- Minor Healing Potions --
+  -- Minor Healing / Mana Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(118) > 1 and GetItemCooldown(118) == 0 then
   macro("/cancelform")
   RunMacroText('/use Minor Healing Potion')
+  end
+  if player.mana.percent <= icmanapotionpercent and GetItemCount(2455) > 1 and GetItemCooldown(118) == 0 then
+  macro("/cancelform")
+  RunMacroText('/use Minor Mana Potion')
   end
   ------------ END OF HEALING POTIONS CHECK ------------
 end
@@ -227,6 +252,9 @@ local function combat()
 
   local useichealthpotion = dark_addon.settings.fetch('dr_druid_ichealthpotion.check', true)
   local ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_icrhealthpotion.spin', 25)
+
+  local useicmanapotion = dark_addon.settings.fetch('dr_druid_icmanapotion.check', true)
+  local icmanapotionpercent = dark_addon.settings.fetch('dr_druid_icrmanapotion.spin', 25)
 
 
 
@@ -663,9 +691,14 @@ local function interface()
   { key = 'ichealingtouch', type = 'checkspin', text = 'Healing Touch', desc = 'Healing Touch at player health %', min = 1, max = 100, step = 5},
   { key = 'icregrowth', type = 'checkspin', text = 'Regrowth', desc = 'Regrowth at player health %', min = 1, max = 100, step = 5},
   { key = 'icrejuvenation', type = 'checkspin', text = 'Rejuvenation', desc = 'Rejuvenation at player health %', min = 1, max = 100, step = 5},
-  { key = 'ichealthpotion', type = 'checkspin', text = 'Health Potion', desc = 'Health Potion used at player health %', min = 1, max = 100, step = 5},
   { key = 'curepoisonooc', type = 'checkbox', text = 'Cure Poison', desc = 'Use out of combat' },
   
+  { type = 'rule' },
+  { type = 'text', text = 'Potion Options' },
+  { type = 'rule' },
+  { key = 'ichealthpotion', type = 'checkspin', text = 'Health Potion', desc = 'Health Potion used at player health %', min = 1, max = 100, step = 5},
+  { key = 'icmanapotion', type = 'checkspin', text = 'Mana Potion', desc = 'Mana Potion used at player health %', min = 1, max = 100, step = 5},
+
   { type = 'rule' },
   { type = 'text', text = 'Buff Options' },
   { type = 'rule' },
