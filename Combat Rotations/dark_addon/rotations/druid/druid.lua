@@ -161,6 +161,10 @@ local function selfheal(incombat)
     return true
   end
 
+  -----------------------------------------------------------------
+  ------------POTIONS----------------------------------------------
+  -----------------------------------------------------------------
+
     -- Major Potions --
   if player.health.percent <= ichealthpotionpercent and GetItemCount(13446) > 1 and GetItemCooldown(13446) == 0 then
   macro("/cancelform")
@@ -222,7 +226,10 @@ local function selfheal(incombat)
   macro("/cancelform")
   RunMacroText('/use Minor Mana Potion')
   end
-  ------------ END OF HEALING POTIONS CHECK ------------
+  -----------------------------------------------------------------
+  ------------END OF POTIONS---------------------------------------
+  -----------------------------------------------------------------
+
 end
 setfenv(selfheal, dark_addon.environment.env)
 
@@ -445,6 +452,117 @@ if not player.alive or player.buff('Drink').up or player.buff('Food').up then re
     if toggle('override_form', false) then
       macro("/cancelform")
     end
+
+  ----------------------------------------------------------------
+  ------------SCROLLS---------------------------------------------
+  ----------------------------------------------------------------
+
+  -- Agillity Scrolls----
+  if GetItemCount(3012) > 1 and GetItemCooldown(3012) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll of Agility')
+  end
+  if GetItemCount(1477) > 1 and GetItemCooldown(1477) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll of Agility II')
+  end
+  if GetItemCount(4425) > 1 and GetItemCooldown(4425) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll of Agility III')
+  end
+  if GetItemCount(10309) > 1 and GetItemCooldown(10309) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll of Agility IV')
+  end
+
+  -- Intellect Scrolls --
+  if GetItemCount(955) > 1 and GetItemCooldown(955) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Intellect')
+  end
+  if GetItemCount(2290) > 1 and GetItemCooldown(2290) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Intellect II')
+  end
+  if GetItemCount(4419) > 1 and GetItemCooldown(4419) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Intellect III')
+  end
+  if GetItemCount(10308) > 1 and GetItemCooldown(10308) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Intellect IV')
+  end
+
+  -- Protection Scrolls --
+  if GetItemCount(3013) > 1 and GetItemCooldown(3013) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Protection')
+  end
+  if GetItemCount(1478) > 1 and GetItemCooldown(1478) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Protection II')
+  end
+  if GetItemCount(4421) > 1 and GetItemCooldown(4421) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Protection III')
+  end
+  if GetItemCount(10305) > 1 and GetItemCooldown(10305) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Protection IV')
+  end
+
+    -- Spirit Scrolls --
+  if GetItemCount(1181) > 1 and GetItemCooldown(1181) == 0 then
+  macro(/"cancelform")
+  end
+   if GetItemCount(1712) > 1 and GetItemCooldown(1712) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Spirit II')
+  end
+  if GetItemCount(4424) > 1 and GetItemCooldown(4424) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Spirit III')
+  end
+  if GetItemCount(10306) > 1 and GetItemCooldown(10306) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Spirit IV')
+  end
+
+  -- Stamina Scrolls --
+  if GetItemCount(1180) > 1 and GetItemCooldown(1180) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Stamina')
+  end
+  if GetItemCount(1711) > 1 and GetItemCooldown(1711) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Stamina II')
+  end
+  if GetItemCount(4422) > 1 and GetItemCooldown(4422) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Stamina III')
+  end
+  if GetItemCount(10307) > 1 and GetItemCooldown(10307) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Stamina IV')
+  end
+
+  -- Strength Scrolls --
+  if GetItemCount(954) > 1 and GetItemCooldown(954) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Strength')
+  end
+  if GetItemCount(2289) > 1 and GetItemCooldown(2289) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Strength II')
+  end
+  if GetItemCount(4426) > 1 and GetItemCooldown(4426) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Strength III')
+  end
+  if GetItemCount(10310) > 1 and GetItemCooldown(10310) == 0 then
+  macro(/"cancelform")
+  RunMacroText('/use Scroll Of Strength IV')
+  end
 
     --if (toggle('travel_form', false) and (player.buff('Bear Form').up or player.buff('Cat Form').up or player.buff('Dire Bear Form').up)) then
     --  macro("/cancelform")
