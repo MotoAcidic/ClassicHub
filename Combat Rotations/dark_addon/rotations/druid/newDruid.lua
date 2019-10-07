@@ -62,279 +62,36 @@ local addon, dark_addon = ...
 local addon, dark_addon_potions = ...
 
 local SelfHealCastTime = 0
-local function selfheal(incombat)
-  --if not toggle('self_heal', false) then return false end
-  local healpause = dark_addon.settings.fetch('dr_druid_healpause', 8)
+local function selfheal()
+  if player.dead or player.channeling() then return end
 
-  if (GetTime()-SelfHealCastTime) <= healpause then return end
-  local ichealingtouchpercent
-  local icregrowthpercent
-  local icrejuvenationpercent
-  local ichealthpotionpercent
-  local icmanapotionpercent
-
-
-  if incombat then
-
--- Regrowth Spell
-  if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
-    icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
-    icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
-	end
-
-   if incombat then
-      -- Rejuvenation Spell
-  if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
-    icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
-    icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-	end
-
-   if incombat then
-  -- Healingtouch spell
-  if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
-    ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_ichealingtouch.check', false) then return false end
-    ichealingtouchpercent = dark_addon.settings.fetch('dr_druid_ichealingtouch.spin', 25)
-	end
-
-   if incombat then
-    -- Health Potions
-  if not dark_addon.settings.fetch('dr_druid_ichealthpotion.check', false) then return false end
-    ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_ichealthpotion.check', false) then return false end
-    ichealthpotionpercent = dark_addon.settings.fetch('dr_druid_ichealthpotion.spin', 25)
-	end
-
-     if incombat then
-    -- Mana Potions
-  if not dark_addon.settings.fetch('dr_druid_icmanapotion.check', false) then return false end
-    icmanapotionpercent = dark_addon.settings.fetch('dr_druid_icmanapotion.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_icmanapotion.check', false) then return false end
-    icmanapotionpercent = dark_addon.settings.fetch('dr_druid_icmanapotion.spin', 25)
-	end
-
-  -- to save mana, use the lowest rank spell the will fully heal
-  if player.health.percent <= ichealingtouchpercent and not player.moving and player.buff('Healing Touch').down then
-    --local spell = DownRankSpell(SB.HealingWave, player)
-    --if castable(spell) then
-    --  SelfHealCastTime = GetTime()
-      macro("/cancelform")
-      cast('Healing Touch', 'player')
-      return true
-    --end
+  -- Pause if eating or drinking
+  if dark_addon.settings.fetch('dr_druid_drinking', true) then
+    for i=1,40 do
+      local name, _ = UnitBuff("player",i)
+      if name =='Drink' or name =='Food' then return end
+    end
   end
 
-  if player.health.percent <= icregrowthpercent and not player.moving and player.buff('Regrowth').down then
-    --local spell = DownRankSpell(SB.HealingWave, player)
-    --if castable(spell) then
-    --  SelfHealCastTime = GetTime()
-      macro("/cancelform")
-      cast('Regrowth', 'player')
-      return true
-    --end
+  --- SELF HEALING
+  -- Regrowth
+  if player.health.percent <= dark_addon.settings.fetch('dr_druid_regrowth.spin', 10) 
+  and dark_addon.settings.fetch('dr_druid_regrowth.check', false) then
+    macro('/use Regrowth')
   end
 
-  if player.health.percent <= icrejuvenationpercent and not player.moving and player.buff('Rejuvenation').down then
-    --local spell = DownRankSpell(SB.HealingWave, player)
-    --if castable(spell) then
-    --  SelfHealCastTime = GetTime()
-      macro("/cancelform")
-      cast('Rejuvenation', 'player')
-      return true
-    --end
+  -- Rejuvenation
+  if player.health.percent < dark_addon.settings.fetch('dr_druid_Rejuvenation.spin', 20)
+  and dark_addon.settings.fetch('dr_druid_Rejuvenation.check', false) then
+    macro('/use Rejuvenation')
   end
 
-  if player.removable('poison') and castable('Cure Poison') and -spell('Cure Poison') == 0 then
-	macro("/cancelform")
-    cast('Cure Poison', 'player')
-    return true
+  -- Healing Touch
+  if player.health.percent < dark_addon.settings.fetch('dr_druid_healingtouch.spin', 40)
+  and dark_addon.settings.fetch('dr_druid_healingtouch.check', false) then
+    macro('/use Healing Touch')
   end
-
-  -----------------------------------------------------------------
-  ------------POTIONS----------------------------------------------
-  -----------------------------------------------------------------
-
-    -- Major Potions --
-  if player.health.percent <= ichealthpotionpercent and GetItemCount(13446) >= 1 and GetItemCooldown(13446) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Major Healing Potion')
-  return true
-  end
-  if player.health.percent <= icmanapotionpercent and GetItemCount(13444) >= 1 and GetItemCooldown(13444) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Major Mana Potion')
-  return true
-  end
-
-  -- Superior Potions --
-  if player.health.percent <= ichealthpotionpercent and GetItemCount(3928) >= 1 and GetItemCooldown(3928) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Superior Healing Potion')
-  end
-  if player.health.percent <= icmanapotionpercent and GetItemCount(13443) >= 1 and GetItemCooldown(13443) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Superior Mana Potion')
-  end
-
-  -- Greater Potions --
-  if player.health.percent <= ichealthpotionpercent and GetItemCount(1710) >= 1 and GetItemCooldown(1710) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Greater Healing Potion')
-  end
-    if player.health.percent <= icmanapotionpercent and GetItemCount(6149) >= 1 and GetItemCooldown(6149) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Greater Mana Potion')
-  end
-
-  -- Potions --
-  if player.health.percent <= ichealthpotionpercent and GetItemCount(929) >= 1 and GetItemCooldown(929) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Healing Potion')
-  end
-  if player.health.percent <= icmanapotionpercent and GetItemCount(3827) >= 1 and GetItemCooldown(3827) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Mana Potion')
-  end
-
-  -- Lesser Potions --
-  if player.health.percent <= ichealthpotionpercent and GetItemCount(858) >= 1 and GetItemCooldown(858) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Lesser Healing Potion')
-  end
-  if player.health.percent <= icmanapotionpercent and GetItemCount(3385) >= 1 and GetItemCooldown(3385) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Lesser Mana Potion')
-  end
-
-  -- Minor Potions --
-  if player.health.percent <= ichealthpotionpercent and GetItemCount(118) >= 1 and GetItemCooldown(118) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Minor Healing Potion')
-  end
-  if player.health.percent <= icmanapotionpercent and GetItemCount(2455) >= 1 and GetItemCooldown(2455) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Minor Mana Potion')
-  end
-  -----------------------------------------------------------------
-  ------------END OF POTIONS---------------------------------------
-  -----------------------------------------------------------------
-
-    ----------------------------------------------------------------
-  ------------SCROLLS---------------------------------------------
-  ----------------------------------------------------------------
-
-  -- Agillity Scrolls----
-  if GetItemCount(3012) >= 1 and GetItemCooldown(3012) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll of Agility')
-  end
-  if GetItemCount(1477) >= 1 and GetItemCooldown(1477) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll of Agility II')
-  end
-  if GetItemCount(4425) >= 1 and GetItemCooldown(4425) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll of Agility III')
-  end
-  if GetItemCount(10309) >= 1 and GetItemCooldown(10309) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll of Agility IV')
-  end
-
-  -- Intellect Scrolls --
-  if GetItemCount(955) >= 1 and GetItemCooldown(955) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Intellect')
-  end
-  if GetItemCount(2290) >= 1 and GetItemCooldown(2290) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Intellect II')
-  end
-  if GetItemCount(4419) >= 1 and GetItemCooldown(4419) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Intellect III')
-  end
-  if GetItemCount(10308) >= 1 and GetItemCooldown(10308) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Intellect IV')
-  end
-
-  -- Protection Scrolls --
-  if GetItemCount(3013) >= 1 and GetItemCooldown(3013) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Protection')
-  end
-  if GetItemCount(1478) >= 1 and GetItemCooldown(1478) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Protection II')
-  end
-  if GetItemCount(4421) >= 1 and GetItemCooldown(4421) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Protection III')
-  end
-  if GetItemCount(10305) >= 1 and GetItemCooldown(10305) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Protection IV')
-  end
-
-    -- Spirit Scrolls --
-  if GetItemCount(1181) >= 1 and GetItemCooldown(1181) == 0 then
-  macro("/cancelform")
-    RunMacroText('/use Scroll Of Spirit')
-  end
-   if GetItemCount(1712) >= 1 and GetItemCooldown(1712) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Spirit II')
-  end
-  if GetItemCount(4424) >= 1 and GetItemCooldown(4424) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Spirit III')
-  end
-  if GetItemCount(10306) >= 1 and GetItemCooldown(10306) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Spirit IV')
-  end
-
-  -- Stamina Scrolls --
-  if GetItemCount(1180) >= 1 and GetItemCooldown(1180) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Stamina')
-  end
-  if GetItemCount(1711) >= 1 and GetItemCooldown(1711) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Stamina II')
-  end
-  if GetItemCount(4422) >= 1 and GetItemCooldown(4422) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Stamina III')
-  end
-  if GetItemCount(10307) >= 1 and GetItemCooldown(10307) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Stamina IV')
-  end
-
-  -- Strength Scrolls --
-  if GetItemCount(954) >= 1 and GetItemCooldown(954) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Strength')
-  end
-  if GetItemCount(2289) >= 1 and GetItemCooldown(2289) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Strength II')
-  end
-  if GetItemCount(4426) >= 1 and GetItemCooldown(4426) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Strength III')
-  end
-  if GetItemCount(10310) >= 1 and GetItemCooldown(10310) == 0 then
-  macro("/cancelform")
-  RunMacroText('/use Scroll Of Strength IV')
-  end
-
 end
-setfenv(selfheal, dark_addon.environment.env)
 
 
 
