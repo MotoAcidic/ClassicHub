@@ -29,6 +29,8 @@
 --To do
     --Healing Spells
     ----------------
+    --Rejuvenation    TFinch finished
+    --Regrowth        TFinch finished
     --Cure Poison
     --Rebirth
     --Tranquility
@@ -46,7 +48,9 @@
 
     --Druid Cast
     ------------
+    --Faerie Fire
     --Starfire
+    --Insect Swarm
     --Hurricane
 
     --Cooldowns
@@ -79,7 +83,7 @@ local function selfheal(incombat)
 -- Regrowth Spell
   if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
     icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
+  else if not dark_addon.settings.fetch('dr_druid_icregrowth.check', false) then return false end
     icregrowthpercent = dark_addon.settings.fetch('dr_druid_icregrowth.spin', 25)
 	end
 
@@ -87,7 +91,7 @@ local function selfheal(incombat)
       -- Rejuvenation Spell
   if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
     icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
-    else if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
+  else if not dark_addon.settings.fetch('dr_druid_icrejuvenation.check', false) then return false end
     icrejuvenationpercent = dark_addon.settings.fetch('dr_druid_icrejuvenation.spin', 25)
 	end
 
@@ -332,7 +336,6 @@ local function selfheal(incombat)
   macro("/cancelform")
   RunMacroText('/use Scroll Of Strength IV')
   end
-
 end
 setfenv(selfheal, dark_addon.environment.env)
 

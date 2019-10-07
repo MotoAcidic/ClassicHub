@@ -297,7 +297,6 @@ local function interface()
       end
     end
   })
-
 end
 
 dark_addon.rotation.register({

@@ -1,5 +1,5 @@
-- Settings
 
+- Settings
 ```
 /run HEALTH_PERCENTAGE_EAT = 100
 /run HEALTH_PERCENTAGE_EAT = 90
